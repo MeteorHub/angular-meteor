@@ -1,89 +1,86 @@
 {{#template name="tutorial.step_04.md"}}
 {{> downloadPreviousStep stepName="step_03"}}
 
-Now that we have full data binding from server to client, let's interact with the data and see the updates in action.
+现在，我们已经实现了从服务端到客户端的数据绑定，接下来，要与数据交互，进行数据更新。
 
-In this chapter you will add the ability to insert a new party and delete an existing one from the UI.
+在本节中，要实现通过界面插入新 party 以及删除功能。
 
-First, let's create a simple form with a button that will add a new party, we will add it above the list, inside the "PartiesListCtrl" controller's div.
+首先，创建一个表单，点击按钮就可以添加一个新 party。我们把表单放在 "PartiesListCtrl" 控制器对应的 div 中，party 列表之上。
 
 {{> DiffBox tutorialName="angular-meteor" step="4.1"}}
 
-Now we need to make this form functional.
+现在，需要实现表单的功能。
 
 ## ng-model
 
-First things first, let's bind the value of the inputs into a new party variable.
+第一件事，把输入框的值绑定到一个新的 party 变量。
 
-To do that we'll use the simple and powerful [ng-model](https://docs.angularjs.org/api/ng/directive/ngModel) AngularJS directive.
+这要用到简单却强大的 AngularJS 指令 [ng-model](https://docs.angularjs.org/api/ng/directive/ngModel)。
 
-Add `ng-model` to the form like this:
+以下面的方式把 `ng-model` 添加到表单：
 
 {{> DiffBox tutorialName="angular-meteor" step="4.2"}}
 
-Now each time the user types inside these inputs, the value of the newParty scope variable will be automatically updated.  Conversely, if `$scope.newParty` is changed outside of the HTML, the input values will be updated accordingly.
+现在，每当用户在这些输入框进行输入时，newParty scope 变量的值都会自动更新。对应的，如果 `$scope.newParty` 在HTML以外的地方发生变化，输入框的值也会相应更新。
 
 ## ng-click
 
-Now let's bind a click event to the add button with Angular's [ng-click](https://docs.angularjs.org/api/ng/directive/ngClick) directive.
+通过 Angular 的 [ng-click](https://docs.angularjs.org/api/ng/directive/ngClick) 指令给按钮绑定 click 事件。
 
 {{> DiffBox tutorialName="angular-meteor" step="4.3"}}
 
-`ng-click` binds the click event to an expression.
-So we take the parties scope array (when accessing scope variables in the HTML, there is no need to add $scope. before them) and push the newParty variable into it.
+`ng-click` 绑定 click 事件到一个表达式。我们获取 parties scope 数组 (当在HTML中获取 scope 变量时，不用在前面加上 $scope. )，并把 newParty 变量推进去。
 
-Open a different browser, click the button and see how the party is added on both clients. So simple!
+打开另一个浏览器窗口，点击按钮，发现所有的客户端都新增了 party。太简单了！
 
+接下来，增加删除功能。
 
-Now, let's add the ability to delete parties.
-
-Let's add an X button to each party:
+给每一个 party 添加一个 X 按钮：
 
 {{> DiffBox tutorialName="angular-meteor" step="4.4"}}
 
-This time we are binding ng-click to a scope function that gets the current party as a parameter.
+这次，我们绑定 ng-click 到一个 scope 函数，并把当前的 party 作为参数。
 
-Let's go into the controller and add that function.
+回到控制器中，增加这个函数。
 
-Add the function inside the PartiesListCtrl in `app.js`:
+在 `app.js` 的 PartiesListCtrl 中，添加函数：
 
 {{> DiffBox tutorialName="angular-meteor" step="4.5"}}
 
-Now try to delete a few parties and also watch them being removed from other browser clients.
+现在，试着删除几个 parties ，并观察其它客户端也进行了同步删除。
 
 # AngularMeteorCollection functions
 
-$meteor.collection's return value is a new collection of type [AngularMeteorCollection](/api/AngularMeteorCollection).
+$meteor.collections 的返回值是一个 [AngularMeteorCollection](/api/AngularMeteorCollection) 类型的集合。
 
-It is not only responsible for keeping the collection updated, it also has helper functions for saving and deleting objects.
+它不仅负责更新集合，还包含一些 helper 函数，用来保存和删除对象。
 
-Let's try to use these helper functions instead of the current implementation.
+我们试着用这些 helper 函数替换当前的实现。
 
-First let's replace our `push` with `save` in the add button action:
+首先，在按钮的点击事件中用 `save` 代替 `push`：
 
 {{> DiffBox tutorialName="angular-meteor" step="4.6"}}
 
-There isn't much difference here except a small performance improvement, but now let's change our remove function:
+这里的变化不大，除了一点点性能上的提升，接下来，修改删除函数：
 
 {{> DiffBox tutorialName="angular-meteor" step="4.7"}}
 
-Much nicer, and gives better performance!
+更简洁，性能也更好！
 
-Also let's add a button to remove all parties:
+添加一个按钮，用于删除所有 parties:
 
 {{> DiffBox tutorialName="angular-meteor" step="4.8"}}
 
-not forgetting to add this new function to the scope:
+别忘了添加删除函数到 scope:
 
 {{> DiffBox tutorialName="angular-meteor" step="4.9"}}
 
-Again, very simple syntax.
+非常简洁。
 
-You can read more about AngularMeteorCollection and it's helper functions in the [API reference](/api/AngularMeteorCollection).
+有关 AngularMeteorCollection 和它的 helper 函数详见 [API reference](/api/AngularMeteorCollection)。 
 
+# 总结
 
-# Summary
-
-So now you've seen how easy it is to manipulate the data using Angular's powerful directives and sync that data with Meteor's powerful Mongo.collection API.
+你已经看到了，使用 Angular 强大的指令操作数据以及用 Meteor 强大的 Mongo.collection API 同步数据是多么的简单。
 
 {{/template}}
