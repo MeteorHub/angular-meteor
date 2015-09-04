@@ -1,70 +1,68 @@
 {{#template name="tutorial.step_02.md"}}
 {{> downloadPreviousStep stepName="step_01"}}
 
-Now it's time to make the web page dynamic — with AngularJS.
+是时候用 AngularJS 将页面变为动态的了。
 
-This step will still be focusing on client side Angular tools. The next one will show you how to get the power of Meteor.
+Step 2 将主要关注客户端 Angular。Step 3 会展示 Meteor 的强大之处。
 
-# View and Template
+# 视图和模板
 
-In Angular, the view is a projection of the model through the HTML template. This means that whenever the model changes, Angular refreshes the appropriate binding points, which updates the view.
+在 Angular 中，视图是模型通过模板的映射。也就是说，无论何时模型发生了变化，Angular 刷新合适的绑定点来更新视图。
 
-Let's change our template to be dynamic:
+来把我们的模板改为动态的：
 
 {{> DiffBox tutorialName="angular-meteor" step="2.1"}}
 
-We replaced the hard-coded party list with the [ngRepeat](https://docs.angularjs.org/api/ng/directive/ngRepeat) directive and two Angular expressions:
+用 [ngRepeat](https://docs.angularjs.org/api/ng/directive/ngRepeat) 指令和两个 Angular 表达式替换硬编码的 party 列表：
 
-* The `ng-repeat="party in parties"` attribute in the `li` tag is an Angular repeater directive. The repeater tells Angular to create a `li` element for each party in the list using the `li` tag as the template.
-* The expressions wrapped in double-curly-braces ( `{{dstache}}party.name}}` and `{{dstache}}party.description}}` ) will be replaced by the value of the expressions.
+* `li` 标签的属性 `ng-repeat="party in parties"` 是一个 Angular repeater 指令。repeater 通知 Angular 给列表里的每一个 party 创建一个 `li` 标签。
+* 双花括号包裹的表达式 ( `{{dstache}}party.name}}` 和 `{{dstache}}party.description}}` ) 会被表达式的值替换。
 
-We have added a new directive, called `ng-controller`, which attaches the `PartiesListCtrl` controller to the `div` tag. At this point:
+我们还用到了一个新的指令 `ng-controller`，它把 `PartiesListCtrl` 控制器附加到 `div` 标签上。
+这样，双花括号包裹的表达式就可以引用 `PartiesListCtrl` 控制器中创建的模型，
 
-* The expressions in double-curly-braces are referring to our application model, which is set up in our `PartiesListCtrl` controller.
 
+# 模型和控制器
 
-# Model and Controller
-
-Now we are going to create our controller and model.
-We start with `PartiesListCtrl` controller and place data in it.
+现在，我们要创建控制器和模型。新建 `PartiesListCtrl` 控制器，并添加数据。
 
 {{> DiffBox tutorialName="angular-meteor" step="2.2"}}
 
-Here we declared a controller called `PartiesListCtrl` and registered it in our Angular module app - `socially`.
+我们声明了一个叫做 `PartiesListCtrl` 的控制器，并把它注册到了 Angular 模块 - `socially`。
 
-The data model is now instantiated within the `PartiesListCtrl` controller.
+现在，数据模型在 `PartiesListCtrl` 控制器中进行了实例化。
+尽管现在控制器还没做啥工作，但是它很关键。通过提供数据模型上下文，控制器建立了模型和视图之间的数据绑定。我们用下面的方式建立了展示、数据和逻辑组件之间的联系：
 
-Although the controller is not yet doing very much, it plays a crucial role. By providing context for our data model, the controller allows us to establish data-binding between the model and the view. We connected the dots between the presentation, the data, and the logic components as follows:
+* `body` 标签上的 ngController 指令，引用着控制器的名字 `PartiesListCtrl` (定义在javascript文件 `app.js`)
+* `PartiesListCtrl` 控制器把 party 数据关联到被注入到控制器的 `$scope` 上。
+所有在 `<div ng-controller="PartiesListCtrl">` 标签里的绑定都可以获取控制器的 scope。
 
-* The ngController directive, located on the `body` tag, references the name of our controller, `PartiesListCtrl` (located in the JavaScript file `app.js`).
-* The `PartiesListCtrl` controller attaches the party data to the `$scope` that was injected into our controller function. This controller scope is available to all bindings located within the `div ng-controller="PartiesListCtrl">` tag.
+# ng-annotate 和 .ng.js
 
-# ng-annotate and .ng.js
-
-As you can see, when we declared the controller, we used strings for [dependency annotations](https://docs.angularjs.org/guide/di#dependency-annotation) that avoids minification problems:
+如你所见，在声明控制器的时候，使用了字符串形式的[依赖注解](https://docs.angularjs.org/guide/di#dependency-annotation)，避免代码压缩时出现问题：
 
     angular.module('socially').controller('PartiesListCtrl', ['$scope',
       function($scope){
         // ...
     }]);
 
-There is a very popular Angular tool that's called [ng-annotate](https://github.com/olov/ng-annotate) that takes care of that for us so we can write regular code that won't get mangled in minification.
+[ng-annotate](https://github.com/olov/ng-annotate)是个很流行的 Angular 工具，它可以保证我们正常编写的代码不会在压缩时出问题。
 
-angular-meteor uses that process automatically. All you need to do is to change your `.js` files to end with `.ng.js`
+angular-meteor 自动使用了该工具。你只需将 `.js` 文件改为 `.ng.js` 后缀。
 
-Then you can write your dependency injection like this:
+然后，你就可以用下面的方式写依赖注入：
 
     angular.module('socially').controller('PartiesListCtrl',
       function($scope){
         // ...
     });
 
-# Summary
+# 总结
 
-You now have a dynamic app that features separate model, view and controller components.
+现在，我们有了一个动态 APP，包含独立的模型，视图和控制器组件。
 
-But, this is all client side, which is nice for tutorials, but in a real application we need to persist the data on the server and sync all the clients with it.
+但是，这全是在客户端。在一个真实的 APP 中，我们需要在服务端保存数据并同步给客户端。
 
-So, let's go to [step 3](/tutorial/step_03) to learn how to bind our application to the great power of Meteor.
+接下来，[step 3](/tutorial/step_03)将展示如何结合 Meteor 的强大之处。
 
 {{/template}}
