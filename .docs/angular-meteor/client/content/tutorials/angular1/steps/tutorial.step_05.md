@@ -1,127 +1,115 @@
 {{#template name="tutorial.step_05.md"}}
 {{> downloadPreviousStep stepName="step_04"}}
 
-In this step, you will learn how to create a layout template and how to build an app that has multiple views by adding routing, using an Angular module called `ui-router`.
+在这一节，你将会学习如何创建 layout 模板，以及使用 Angular 模块 `ui-router` 添加路由，开发多视图 APP。
 
-The goals for this step:
+本节目标：
 
-* When you navigate to `index.html`, you will be redirected to `index.ng.html/parties` and the party list should appear in the browser.
-* When you click on a party link the URL should change to one specific to that party and the stub of a party detail page is displayed.
+* 当导航到 `index.html` 时，会跳转到 `index.ng.html/parties` 并显示 party 列表。
+* 当点击某个 party 的链接时，跳转到对应的详情页。
 
-# Dependencies
+# 依赖
 
-The routing functionality added by this step is provided by the [ui-router](https://github.com/angular-ui/ui-router) module, which is distributed separately from the core Angular framework.
+路由功能由 [ui-router](https://github.com/angular-ui/ui-router) 模块提供，它并没有包含在 Angular 核心框架中。
 
-We will install ui-router with the help of [the official Meteor package](https://atmospherejs.com/angularui/angular-ui-router).
+我们通过 [Meteor 官方包平台](https://atmospherejs.com/angularui/angular-ui-router)安装 ui-router
 
-Type in the command line:
+执行下面的命令：
 
     meteor add angularui:angular-ui-router
 
-Then add the ui-router as a dependency to our angular app in `app.js`:
+在 `app.js` 中，添加 ui-router 作为依赖：
 
 {{> DiffBox tutorialName="angular-meteor" step="5.1"}}
 
-# Multiple Views, Routing and Layout Template
+# 多视图，路由和 Layout 模板
 
-Our app is slowly growing and becoming more complex.
-Until now, the app provided our users with a single view (the list of all parties), and all of the template code was located in the `index.ng.html` file.
+我们的 APP 慢慢的变得复杂起来。到目前为止，APP 展示给用户的只是单一视图(parties 的列表)，所有的模板代码都位于 `index.ng.html` 文件。
 
-The next step in building the app is to add a view that will show detailed information about each of the parties in our list.
+下一步要做的就是，添加用于展示每个 party 详情的视图。
 
-To add the detailed view, we could expand the `index.ng.html` file to contain template code for both views, but that would get messy very quickly.
+要添加详情页，我们可以选择扩展 `index.ng.html` 文件，将模板代码全都放进去，但是它很快就会变得混乱不堪。
 
-Instead, we are going to turn the `index.html` template into what we call a "layout template". This is a template that is common for all views in our application.
-Other "partial templates" are then included into this layout template depending on the current "route" — the view that is currently displayed to the user.
+而我们的方法是：将 `index.html` 模板改为 "layout 模板"。作为我们 APP 所有视图的基础。其它的 "partial 模板"会根据当前的路由，选择性的引入到 layout 模板。
 
-Application routes in Angular are declared via the [$stateProvider](https://github.com/angular-ui/ui-router/wiki), which is the provider of the $state service.
-This service makes it easy to wire together controllers, view templates, and the current URL location in the browser.
-Using this feature we can implement deep linking, which lets us utilize the browser's history (back and forward navigation) and bookmarks.
+Angular 中的路由通过 [$stateProvider](https://github.com/angular-ui/ui-router/wiki) 来声明，它是 $state 服务的 provider。
+$state 服务使关联控制器、视图模板和当前URL变得简单。
+通过这个特性可以实现深度链接，这样就可以利用浏览器历史(前进和后退)和书签功能。
 
+# 模板
 
-# Template
+$state 服务通常结合 uiView 指令一起使用。uiView 指令的作用是引入当前路由对应的模板到 layout 模板中。
+这很适合我们的 `index.ng.html` 模板。
 
-The $state service is normally used in conjunction with the uiView directive.
-The role of the uiView directive is to include the view template for the current route into the layout template.
-This makes it a perfect fit for our `index.ng.html` template.
-
-Let's create a new html file called `parties-list.ng.html` and paste the existing list code from `index.ng.html` into it:
+创建一个新的 HTML 文件，叫做 `parties-list.html`，然后把 `index.ng.html` 文件中的 parties 列表代码拷贝过去：
 
 {{> DiffBox tutorialName="angular-meteor" step="5.2"}}
 
-The code is almost the same except for this one change:
+代码只有一点变化：
 
-- Added a link to the parties name display (that link will take us to that party's detailed page)
+- 给 parties 标题增加了链接(会链接到详情页)
 
-Now let's go back to `index.html` and replace the content with the `ui-view` directive:
+回到 `index.html`中，用 `ui-view` 指令替换对应内容：
 
 {{> DiffBox tutorialName="angular-meteor" step="5.3"}}
 
-Notice we did 3 things:
+我们做了三件事：
 
-1. Replaced all the content with ui-view (this will be responsible for including the right content according to the current URL).
-2. Added a `h1` header with a link to the main parties page.
-3. We also added a `base` tag in the head (required when using HTML5 location mode).
+1. 用 ui-view 替换 ng-include (ui-view 负责根据 URL 引入正确的模板)
+2. 增加了 `h1` 标签，链接到 parties 页面
+3. 还在头部增加了 `base` 标签(使用 HTML5 location mode 需要) 
 
-Now we can delete the `index.ng.html` file, it's not used any more.
+现在，可以把 `index.ng.html` 删掉了。它已经没有用处了。
 
-Let's add a placeholder to the new party details page.
-Create a new html file called `party-details.ng.html` and paste in the following code:
+我们来给 party 详情页增加一个占位符。新建文件，名为 `party-details.ng.html`，代码如下：
 
 {{> DiffBox tutorialName="angular-meteor" step="5.4"}}
 
-This code can serve as a placeholder for now. We'll get back to filling out the details later on.
+现在，先用上面的代码作为占位符。稍后，再来填充详情。
 
-# Routes definition
+# 定义路由
 
-Now let's configure our routes.
-Add this config code in `app.js`, after the Angular app has been defined:
+现在，我们来配置路由。在 `app.js` 文件中，Angular APP 定义之后，增加配置代码：
 
 {{> DiffBox tutorialName="angular-meteor" step="5.5"}}
 
-Using the Angular app's .config() method, we request the `$stateProvider` to be injected into our config function and use the state method to define our routes.
+用到了 Angular APP 的 .config() 方法，我们请求 `$stateProvider` 注入到 config 函数，然后使用 state 方法定义路由。
 
-Our application routes are defined as follows:
+APP 路由定义如下：
 
-* **('/parties')**: The parties list view will be shown when the URL hash fragment is /parties. To construct this view, Angular will use the parties-list.ng.html template and the PartiesListCtrl controller.
-* **('/parties/:partyId')**: The party details view will be shown when the URL hash fragment matches '/parties/:partyId', where :partyId is a variable part of the URL. To construct the party details view, Angular will use the party-details.ng.html template and the PartyDetailsCtrl controller.
-* **$urlRouterProvider.otherwise('/parties')**: Triggers a redirection to /parties when the browser address doesn't match either of our routes.
-* **$locationProvider.html5Mode(true)**: Sets the URL to look like a regular one. more about it [here](https://docs.angularjs.org/guide/$location#hashbang-and-html5-modes).
-* Each template gets loaded by it's **absolute path** to the project's top folder ('party-details.ng.html').  this is done by angular-meteor's build process which loads the templates into a cache and names them according to their paths.
-If the templates are coming from a package, they will get a prefix of the package name like so - 'my-app_my-package_client/views/my-template.ng.html'.
-You can read more about the templating build process in [our code](https://github.com/Urigo/angular-meteor/blob/master/plugin/handler.js).
+* **('/parties')**: 当 URL hash fragment 是 /parties 时，显示 parties 列表。Angular 会用 parties-list.ng.html 模板和 PartiesListCtrl 控制器构建视图。
+* **('/parties/:partyId')**: 当 URL hash fragment 匹配 '/parties/:partyId' 时，其中 :partyId 是 URL 中的变量。Angular 会用 party-details.ng.html 模板和 PartyDetailsCtrl 控制器构建视图。
+* **$urlRouterProvider.otherwise('/parties')**: 如果 URL 不匹配任何路由时触发跳转到 /parties。
+* **$locationProvider.html5Mode(true)**: 设置 URL 看起来和常规的一致，详见[这里](https://docs.angularjs.org/guide/$location#hashbang-and-html5-modes)。
+* 每个模板都是根据**绝对路径**加载的。这是由 angular-meteor 构建过程完成的，先加载模板到缓存，并根据路径进行命名。
+如果模板来自一个包，会用包名作为前缀，例如：'my-app_my-package_client/views/my-template.ng.html'。
+你可以通过[源代码](https://github.com/Urigo/angular-meteor/blob/master/plugin/handler.js)，了解更多关于模板构建过程。
 
-Note the use of the `:partyId` parameter in the second route declaration.
-The $state service uses the route declaration — `/parties/:partyId` — as a template that is matched against the current URL.
-All variables defined with the : notation are extracted into the $stateParams object.
+注意第二条路由定义时用到的 `:partyId` 参数。$state 服务将路由定义 - `/parties/:partyId` - 作为模板，用来匹配当前URL。所有通过冒号标记定义的变量都会被提取到 $stateParams 对象。
 
-# Controllers
+# 控制器
 
-As you might have seen we removed the controller definition from the ng-controller directive in the `index.ng.html` and moved it into the routes definitions.
+你可能没有注意到，我们移除了 `index.ng.html` 中的 ng-controller 指令，移到了路由定义中。
 
-But we still need to define our `PartyDetailsCtrl` controller.
-Add this code under the existing controller:
-
+我们还需要定义 `PartyDetailsCtrl` 控制器。代码如下：
 {{> DiffBox tutorialName="angular-meteor" step="5.6"}}
 
-Now all is in place.  Run the app and you'll notice a few things:
+一切就绪。运行 APP，你会发现：
 
-* Click on the link in the name of a party - notice that you moved into a different view and that the party's id appears in both the browser's url and in the template.
-* Click back - you are back to the main list, this is because of ui-router's integration with the browser's history.
-* Try to put arbitrary text in the URL - something like http://localhost:3000/strange-url.  You should to be automatically redirected to the main parties list.
+* 点击任意 party 的标题 - 会转到一个新页面，URL 和页面中都出现了 party 的 id。
+* 点击后退 - 你又回到了列表页，这是因为 ui-router 集成了浏览器历史功能
+* 试着修改URL - 例如 http://localhost:3000/strange-url。浏览器会自动跳转到 parties 列表页。
 
+#### 常见错误
 
-#### Common Mistakes
-
-If you haven't entered the correct absolute path when defining the routes (e.g. by accident adding a relative one), then you might get the following error:
+如果你在定义路由时输入了错误的绝对地址(例如，使用了相对地址)，可能会产生如下错误：
 
 WARNING: Tried to load angular more than once.
 
-If that's the case, double check your paths and remember to use the file extension `.ng.html`.
+如果这样的话，检查你的路径，并确保使用了 `.ng.html` 扩展名。
 
+# 总结
 
-# Summary
-
-With the routing set up and the parties list view implemented, we're ready to go to the next step and implement the party details view.
+路由建立完成，parties 列表也实现了，下一步要实现 party 详情页。
 
 {{/template}}
